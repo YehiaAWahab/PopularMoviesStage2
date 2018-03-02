@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final String RESULTS_JSON_ARRAY = "results";
     private static final String MOVIE_ORIGINAL_TITLE_STRING = "original_title";
     private static final String MOVIE_POSTER_PATH_STRING = "poster_path";
+    private static final String MOVIE_Backdrop_POSTER_PATH_STRING = "backdrop_path";
     private static final String MOVIE_PLOT_SYNOPSIS_STRING = "overview";
     private static final String MOVIE_USER_RATING_STRING = "vote_average";
     private static final String MOVIE_RELEASE_DATE_STRING = "release_date";
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public Loader<String> onCreateLoader(int id, Bundle args) {
         return new AsyncTaskLoader<String>(this) {
-            //String mMovieJSON;
+            String mMovieJSON;
 
             @Nullable
             @Override
@@ -123,6 +124,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         .appendPath(popularOrTopRated)
                         .appendQueryParameter(UriConstants.API_KEY_QUERY_PARAM, API_KEY);
                 String url = builder.build().toString();
+                Log.d(TAG, "The URL is: " + url);
+
                 Request request = new Request.Builder()
                         .url(url)
                         .build();
@@ -138,14 +141,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             @Override
             public void deliverResult(@Nullable String data) {
-                CacheJSON.mMovieJSON = data;
+                mMovieJSON = data;
                 super.deliverResult(data);
             }
 
             @Override
             protected void onStartLoading() {
-                if (CacheJSON.mMovieJSON != null) {
-                    deliverResult(CacheJSON.mMovieJSON);
+                if (mMovieJSON != null) {
+                    deliverResult(mMovieJSON);
                 } else {
                     showProgressBar();
                     forceLoad();
@@ -191,15 +194,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             JSONObject nthJSONObject = resultsJSONArray.optJSONObject(i);
             String movieTitle = nthJSONObject.optString(MOVIE_ORIGINAL_TITLE_STRING);
             String moviePoster = nthJSONObject.optString(MOVIE_POSTER_PATH_STRING);
+            String movieBackdropPoster = nthJSONObject.optString(MOVIE_Backdrop_POSTER_PATH_STRING);
             String plotSynopsis = nthJSONObject.optString(MOVIE_PLOT_SYNOPSIS_STRING);
             String userRating = nthJSONObject.optString(MOVIE_USER_RATING_STRING);
             String releaseDate = nthJSONObject.optString(MOVIE_RELEASE_DATE_STRING);
 
             movie = new Movie(movieTitle,
                     moviePoster,
+                    movieBackdropPoster,
                     plotSynopsis,
                     userRating,
                     releaseDate);
+
 
             movieArrayList.add(movie);
         }
@@ -232,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.settings_menu, menu);
+        inflater.inflate(R.menu.sort_by_menu, menu);
         return true;
     }
 
@@ -240,13 +246,31 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
+            case R.id.sort_by_menu:
+                switchSort(item);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+
+    // TODO: Consider using Bundle.
+    private void switchSort(MenuItem item) {
+        //MenuItem menuItem = findViewById(R.id.sort_by_menu);
+        if (item.getTitle().equals(getString(R.string.sort_popular_label))) {
+
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+            editor.putString(getString(R.string.sort_by_key), getString(R.string.sort_top_rated)).apply();
+            item.setTitle(getString(R.string.sort_top_rated_label));
+
+        } else if (item.getTitle().equals(getString(R.string.sort_top_rated_label))) {
+
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+            editor.putString(getString(R.string.sort_by_key), getString(R.string.sort_popular)).apply();
+            item.setTitle(getString(R.string.sort_popular_label));
+        }
+        getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 
     private void restartLoader() {

@@ -3,6 +3,7 @@ package io.github.yahia_hassan.popularmoviesstage2;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,6 +12,8 @@ import com.squareup.picasso.Picasso;
 import static io.github.yahia_hassan.popularmoviesstage2.MainActivity.EXTRA_MESSAGE;
 
 public class DetailsActivity extends AppCompatActivity {
+
+    private static final String TAG = DetailsActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +29,7 @@ public class DetailsActivity extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-        Movie movie = intent.getParcelableExtra(EXTRA_MESSAGE);
+        Movie movie = intent.getParcelableExtra(MainActivity.EXTRA_MESSAGE);
 
         /*
          * I searched online how to set the title of the activity, found the answer on this
@@ -36,11 +39,13 @@ public class DetailsActivity extends AppCompatActivity {
 
         mMovieTitleTextView.setText(movie.getMovieTitle());
 
-        String UrlFirstPart = "https://image.tmdb.org/t/p/w780/";
+        String UrlFirstPart = "https://image.tmdb.org/t/p/w500/";
         Picasso.with(this)
-                .load(UrlFirstPart + movie.getMoviePoster())
+                .load(UrlFirstPart + movie.getMoviePosterBackdrop())
                 .placeholder(R.color.placeholder_grey)
                 .into(mMoviePosterImageView);
+
+        Log.d(TAG, UrlFirstPart + "Image URL is: " + movie.getMoviePosterBackdrop());
 
         mPlotSynopsisTextView.setText(movie.getPlotSynopsis());
         mUserRatingTextView.setText(movie.getUserRating());

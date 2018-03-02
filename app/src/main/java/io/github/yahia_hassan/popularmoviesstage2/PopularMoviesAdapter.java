@@ -57,6 +57,7 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
         String imageUrl = builder.build().toString();
         Picasso.with(mContext)
                 .load(imageUrl)
+                .placeholder(R.color.placeholder_grey)
                 .into(holder.moviePoster);
     }
 

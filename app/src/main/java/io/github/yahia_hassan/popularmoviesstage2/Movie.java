@@ -10,13 +10,15 @@ import android.os.Parcelable;
 public class Movie implements Parcelable {
     private String mMovieTitle;
     private String mMoviePoster;
+    private String mMoviePosterBackdrop;
     private String mPlotSynopsis;
     private String mUserRating;
     private String mReleaseDate;
 
-    public Movie(String movieTitle, String moviePoster, String plotSynopsis, String userRating, String releaseDate) {
+    public Movie(String movieTitle, String moviePoster, String moviePosterBackdrop, String plotSynopsis, String userRating, String releaseDate) {
         mMovieTitle = movieTitle;
         mMoviePoster = moviePoster;
+        mMoviePosterBackdrop = moviePosterBackdrop;
         mPlotSynopsis = plotSynopsis;
         mUserRating = userRating;
         mReleaseDate = releaseDate;
@@ -25,6 +27,7 @@ public class Movie implements Parcelable {
     public Movie(Parcel parcel) {
         setMovieTitle(parcel.readString());
         setMoviePoster(parcel.readString());
+        setMoviePosterBackdrop(parcel.readString());
         setPlotSynopsis(parcel.readString());
         setUserRating(parcel.readString());
         setReleaseDate(parcel.readString());
@@ -50,6 +53,7 @@ public class Movie implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(getMovieTitle());
         dest.writeString(getMoviePoster());
+        dest.writeString(getMoviePosterBackdrop());
         dest.writeString(getPlotSynopsis());
         dest.writeString(getUserRating());
         dest.writeString(getReleaseDate());
@@ -99,4 +103,11 @@ public class Movie implements Parcelable {
         mReleaseDate = releaseDate;
     }
 
+    public String getMoviePosterBackdrop() {
+        return mMoviePosterBackdrop;
+    }
+
+    public void setMoviePosterBackdrop(String moviePosterBackdrop) {
+        mMoviePosterBackdrop = moviePosterBackdrop;
+    }
 }

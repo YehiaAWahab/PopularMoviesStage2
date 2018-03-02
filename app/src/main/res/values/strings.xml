@@ -4,16 +4,16 @@
     <string name="plot_synopsis_label">Plot Synopsis</string>
     <string name="release_date_label">Release Date</string>
     <string name="user_rating_label">User Rating</string>
-    <string name="settings_menu">Settings</string>
+    <string name="sort_by_menu">Popular</string>
 
 
-    <string name="pref_sort_popular_label">Popular</string>
-    <string name="pref_sort_top_rated_label">Top Rated</string>
+    <string name="sort_popular_label">Popular</string>
+    <string name="sort_top_rated_label">Top Rated</string>
 
 
-    <string name="pref_sort_popular">popular</string>
-    <string name="pref_sort_top_rated">top_rated</string>
-    <string name="pref_sort_by_key">pref_sort_by_key</string>
+    <string name="sort_popular">popular</string>
+    <string name="sort_top_rated">top_rated</string>
+    <string name="sort_by_key">pref_sort_by_key</string>
     <string name="sort_by_label">Sort By</string>
     <string name="settings_activity_label">Settings</string>
     <string name="no_network_snack_bar">Can\'t connect, Please check your network and try again.</string>
