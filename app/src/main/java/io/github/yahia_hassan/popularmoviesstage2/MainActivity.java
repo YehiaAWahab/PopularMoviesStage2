@@ -1,15 +1,11 @@
 package io.github.yahia_hassan.popularmoviesstage2;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -22,10 +18,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -40,8 +37,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    public static final String EXTRA_MESSAGE = "DetailActivity key";
-
     private static final String API_KEY = BuildConfig.API_KEY;
 
     public static final int LOADER_ID = 45;
@@ -50,11 +45,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private RecyclerView mRecyclerView;
     private PopularMoviesAdapter mPopularMoviesAdapter;
     private GridLayoutManager mLayoutManager;
-    private CoordinatorLayout mCoordinatorLayout;
+    private TextView mNoNetworkTextView;
+    private Button mRetryButton;
     private ProgressBar mProgressBar;
+    private Bundle mBundle;
 
 
     private static final String RESULTS_JSON_ARRAY = "results";
+    private static final String MOVIE_ID_STRING = "id";
     private static final String MOVIE_ORIGINAL_TITLE_STRING = "original_title";
     private static final String MOVIE_POSTER_PATH_STRING = "poster_path";
     private static final String MOVIE_Backdrop_POSTER_PATH_STRING = "backdrop_path";
@@ -67,8 +65,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mNoNetworkTextView = findViewById(R.id.no_network_tv);
+        mRetryButton = findViewById(R.id.retry_button);
         mRecyclerView = findViewById(R.id.recycler_view);
-        mCoordinatorLayout = findViewById(R.id.coordinatorLayout);
         mProgressBar = findViewById(R.id.progress_bar);
 
         /*
@@ -85,23 +84,35 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 
-        if (isNetworkAvailable()) {
-            getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+        if (Helper.isNetworkAvailable(this)) {
+            Bundle bundle = new Bundle();
+            bundle.putString(getString(R.string.main_activity_bundle_key), UriConstants.POPULAR_PATH);
+            getSupportLoaderManager().initLoader(LOADER_ID, bundle, this);
         } else {
-            showNoNetworkSnackbar();
+            showNoNetworkError();
         }
+
+        mRetryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString(getString(R.string.main_activity_bundle_key), UriConstants.POPULAR_PATH);
+                restartLoader(bundle);
+            }
+        });
 
     }
 
     @Override
     public void OnClick(Movie movie) {
         Intent intent = new Intent(this, DetailsActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, movie);
+        intent.putExtra(UriConstants.EXTRA_MESSAGE, movie);
         startActivity(intent);
     }
 
     @Override
     public Loader<String> onCreateLoader(int id, Bundle args) {
+        mBundle = args;
         return new AsyncTaskLoader<String>(this) {
             String mMovieJSON;
 
@@ -109,19 +120,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public String loadInBackground() {
                 String jsonString = null;
-
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-                String popularOrTopRated = sharedPreferences.getString(
-                        getString(R.string.pref_sort_by_key),
-                        getString(R.string.pref_sort_popular));
-
                 OkHttpClient client = new OkHttpClient();
                 Uri.Builder builder = new Uri.Builder();
                 builder.scheme(UriConstants.SCHEME)
                         .authority(UriConstants.AUTHORITY)
                         .appendPath(UriConstants.VERSION_PATH)
                         .appendPath(UriConstants.MOVIE_PATH)
-                        .appendPath(popularOrTopRated)
+                        .appendPath(mBundle.getString(getString(R.string.main_activity_bundle_key)))
                         .appendQueryParameter(UriConstants.API_KEY_QUERY_PARAM, API_KEY);
                 String url = builder.build().toString();
                 Log.d(TAG, "The URL is: " + url);
@@ -162,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<String> loader, String data) {
         showRecyclerView();
-        JSONObject rootJSONObject = createJSONObjectFromString(data);
+        JSONObject rootJSONObject = Helper.createJSONObjectFromString(TAG, data);
         ArrayList<Movie> movieArrayList = null;
 
         if (rootJSONObject != null) {
@@ -192,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         int size = resultsJSONArray.length();
         for (int i = 0; i < size; i++) {
             JSONObject nthJSONObject = resultsJSONArray.optJSONObject(i);
+            String movieId = nthJSONObject.optString(MOVIE_ID_STRING);
             String movieTitle = nthJSONObject.optString(MOVIE_ORIGINAL_TITLE_STRING);
             String moviePoster = nthJSONObject.optString(MOVIE_POSTER_PATH_STRING);
             String movieBackdropPoster = nthJSONObject.optString(MOVIE_Backdrop_POSTER_PATH_STRING);
@@ -199,7 +205,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             String userRating = nthJSONObject.optString(MOVIE_USER_RATING_STRING);
             String releaseDate = nthJSONObject.optString(MOVIE_RELEASE_DATE_STRING);
 
-            movie = new Movie(movieTitle,
+            movie = new Movie(movieId,
+                    movieTitle,
                     moviePoster,
                     movieBackdropPoster,
                     plotSynopsis,
@@ -212,28 +219,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         return movieArrayList;
     }
 
-    /**
-     * Helper method that creates a new JSONObject from String.
-     * @param jsonString
-     * @return JSONObject or null if JSONException was thrown.
-     */
-    private static JSONObject createJSONObjectFromString (String jsonString) {
-        JSONObject jsonObject = null;
-        try {
-            jsonObject = new JSONObject(jsonString);
-        } catch (JSONException e) {
-            Log.e(TAG, "JSONException caught at createJSONObjectFromString: " + e);
-            e.printStackTrace();
-        }
-        return jsonObject;
-    }
-
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnected();
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -244,10 +229,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Bundle bundle = new Bundle();
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.sort_by_menu:
-                switchSort(item);
+            case R.id.sort_by_menu_popular:
+                bundle.putString(getString(R.string.main_activity_bundle_key), UriConstants.POPULAR_PATH);
+                restartLoader(bundle);
+                return true;
+            case R.id.sort_by_menu_top_rated:
+                bundle.putString(getString(R.string.main_activity_bundle_key), UriConstants.TOP_RATED_PATH);
+                restartLoader(bundle);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -255,52 +246,35 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
 
-    // TODO: Consider using Bundle.
-    private void switchSort(MenuItem item) {
-        //MenuItem menuItem = findViewById(R.id.sort_by_menu);
-        if (item.getTitle().equals(getString(R.string.sort_popular_label))) {
-
-            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-            editor.putString(getString(R.string.sort_by_key), getString(R.string.sort_top_rated)).apply();
-            item.setTitle(getString(R.string.sort_top_rated_label));
-
-        } else if (item.getTitle().equals(getString(R.string.sort_top_rated_label))) {
-
-            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-            editor.putString(getString(R.string.sort_by_key), getString(R.string.sort_popular)).apply();
-            item.setTitle(getString(R.string.sort_popular_label));
-        }
-        getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
-    }
-
-    private void restartLoader() {
-        if (isNetworkAvailable()) {
-            getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
+    private void restartLoader(Bundle bundle) {
+        if (Helper.isNetworkAvailable(this)) {
+            getSupportLoaderManager().restartLoader(LOADER_ID, bundle, this);
         } else {
-            showNoNetworkSnackbar();
+            showNoNetworkError();
         }
 
     }
 
-    private void showNoNetworkSnackbar() {
-        Snackbar.make(mCoordinatorLayout, R.string.no_network_snack_bar, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.retry_snack_bar, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        restartLoader();
-                    }
-                }).show();
+    private void showNoNetworkError() {
+        mProgressBar.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.GONE);
+        mNoNetworkTextView.setVisibility(View.VISIBLE);
+        mRetryButton.setVisibility(View.VISIBLE);
     }
 
     private void showProgressBar() {
         mProgressBar.setVisibility(View.VISIBLE);
         mRecyclerView.setVisibility(View.GONE);
+        mNoNetworkTextView.setVisibility(View.GONE);
+        mRetryButton.setVisibility(View.GONE);
 
     }
 
     private void showRecyclerView() {
         mRecyclerView.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
+        mNoNetworkTextView.setVisibility(View.GONE);
+        mRetryButton.setVisibility(View.GONE);
     }
 
 }
