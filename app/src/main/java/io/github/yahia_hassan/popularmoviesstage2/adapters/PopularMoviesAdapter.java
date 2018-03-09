@@ -31,8 +31,8 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
     }
 
     public PopularMoviesAdapter (Context context, ArrayList<Movie> movieArrayList, MovieAdapterOnClickListener movieAdapterOnClickListener) {
-        mMovieArrayList = movieArrayList;
         mContext = context;
+        mMovieArrayList = movieArrayList;
         mMovieAdapterOnClickListener = movieAdapterOnClickListener;
     }
 

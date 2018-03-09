@@ -2,6 +2,7 @@ package io.github.yahia_hassan.popularmoviesstage2;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 
 import io.github.yahia_hassan.popularmoviesstage2.POJOs.Movie;
 import io.github.yahia_hassan.popularmoviesstage2.adapters.PopularMoviesAdapter;
+import io.github.yahia_hassan.popularmoviesstage2.databinding.ActivityMainBinding;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -41,13 +43,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public static final int LOADER_ID = 45;
 
 
-    private RecyclerView mRecyclerView;
     private PopularMoviesAdapter mPopularMoviesAdapter;
     private GridLayoutManager mLayoutManager;
-    private TextView mNoNetworkTextView;
-    private Button mRetryButton;
-    private ProgressBar mProgressBar;
     private Bundle mBundle;
+    private ActivityMainBinding mActivityMainBinding;
 
 
     private static final String RESULTS_JSON_ARRAY = "results";
@@ -64,10 +63,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mNoNetworkTextView = findViewById(R.id.details_activityno_network_tv);
-        mRetryButton = findViewById(R.id.retry_button);
-        mRecyclerView = findViewById(R.id.recycler_view);
-        mProgressBar = findViewById(R.id.progress_bar);
+        mActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
 
         /*
          * I search online how to get the Activity orientation and find the solution here
@@ -80,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
 
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mActivityMainBinding.recyclerView.setLayoutManager(mLayoutManager);
 
 
         if (Helper.isNetworkAvailable(this)) {
@@ -91,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             showNoNetworkError();
         }
 
-        mRetryButton.setOnClickListener(new View.OnClickListener() {
+        mActivityMainBinding.retryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
@@ -174,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
         mPopularMoviesAdapter = new PopularMoviesAdapter(this, movieArrayList, this);
-        mRecyclerView.setAdapter(mPopularMoviesAdapter);
+        mActivityMainBinding.recyclerView.setAdapter(mPopularMoviesAdapter);
     }
 
     @Override
@@ -255,25 +252,25 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void showNoNetworkError() {
-        mProgressBar.setVisibility(View.GONE);
-        mRecyclerView.setVisibility(View.GONE);
-        mNoNetworkTextView.setVisibility(View.VISIBLE);
-        mRetryButton.setVisibility(View.VISIBLE);
+        mActivityMainBinding.progressBar.setVisibility(View.GONE);
+        mActivityMainBinding.recyclerView.setVisibility(View.GONE);
+        mActivityMainBinding.noNetworkTv.setVisibility(View.VISIBLE);
+        mActivityMainBinding.retryButton.setVisibility(View.VISIBLE);
     }
 
     private void showProgressBar() {
-        mProgressBar.setVisibility(View.VISIBLE);
-        mRecyclerView.setVisibility(View.GONE);
-        mNoNetworkTextView.setVisibility(View.GONE);
-        mRetryButton.setVisibility(View.GONE);
+        mActivityMainBinding.progressBar.setVisibility(View.VISIBLE);
+        mActivityMainBinding.recyclerView.setVisibility(View.GONE);
+        mActivityMainBinding.noNetworkTv.setVisibility(View.GONE);
+        mActivityMainBinding.retryButton.setVisibility(View.GONE);
 
     }
 
     private void showRecyclerView() {
-        mRecyclerView.setVisibility(View.VISIBLE);
-        mProgressBar.setVisibility(View.GONE);
-        mNoNetworkTextView.setVisibility(View.GONE);
-        mRetryButton.setVisibility(View.GONE);
+        mActivityMainBinding.recyclerView.setVisibility(View.VISIBLE);
+        mActivityMainBinding.progressBar.setVisibility(View.GONE);
+        mActivityMainBinding.noNetworkTv.setVisibility(View.GONE);
+        mActivityMainBinding.retryButton.setVisibility(View.GONE);
     }
 
 }
