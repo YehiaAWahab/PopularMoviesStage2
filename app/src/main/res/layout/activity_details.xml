@@ -19,8 +19,7 @@
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@color/colorPrimaryDark" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/original_title_tv"
@@ -34,7 +33,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/movie_poster_iv"
-            tools:text="TextView" />
+            tools:text="TextView"/>
 
         <TextView
             android:id="@+id/plot_synopsis_tv"
@@ -56,7 +55,7 @@
             android:layout_marginStart="8dp"
             app:layout_constraintBaseline_toBaselineOf="@+id/release_date_tv"
             app:layout_constraintStart_toStartOf="@+id/user_rating_label"
-            tools:text="TextView" />
+            tools:text="TextView"/>
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline"
@@ -99,7 +98,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Tooltip"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/original_title_tv" />
+            app:layout_constraintTop_toBottomOf="@+id/original_title_tv"/>
 
 
         <TextView
@@ -113,7 +112,7 @@
             android:textStyle="bold"
             app:layout_constraintBaseline_toBaselineOf="@+id/release_date_label"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <TextView
             android:id="@+id/user_review_label"
@@ -127,38 +126,47 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/plot_synopsis_tv" />
+            app:layout_constraintTop_toBottomOf="@+id/videos_recycler_view" />
 
-        <TextView
-            android:id="@+id/user_review_tv"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/users_review_recycler_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/user_review_label"
             app:layout_constraintVertical_bias="0.0"
-            tools:text="TextView" />
+            tools:text="TextView"/>
 
-        <ProgressBar
-            android:id="@+id/details_progress_bar"
-            style="?android:attr/progressBarStyle"
+        <TextView
+            android:id="@+id/videos_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/videos_label"
+            android:textAppearance="@style/TextAppearance.AppCompat.Tooltip"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/plot_synopsis_tv" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/videos_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/videos_label"/>
 
 
     </android.support.constraint.ConstraintLayout>

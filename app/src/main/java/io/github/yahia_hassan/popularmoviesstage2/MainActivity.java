@@ -2,8 +2,6 @@ package io.github.yahia_hassan.popularmoviesstage2;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -28,6 +26,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import io.github.yahia_hassan.popularmoviesstage2.adapters.PopularMoviesAdapter;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -37,7 +36,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private static final String API_KEY = BuildConfig.API_KEY;
 
     public static final int LOADER_ID = 45;
 
@@ -127,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         .appendPath(UriConstants.VERSION_PATH)
                         .appendPath(UriConstants.MOVIE_PATH)
                         .appendPath(mBundle.getString(getString(R.string.main_activity_bundle_key)))
-                        .appendQueryParameter(UriConstants.API_KEY_QUERY_PARAM, API_KEY);
+                        .appendQueryParameter(UriConstants.API_KEY_QUERY_PARAM, UriConstants.API_KEY);
                 String url = builder.build().toString();
                 Log.d(TAG, "The URL is: " + url);
 

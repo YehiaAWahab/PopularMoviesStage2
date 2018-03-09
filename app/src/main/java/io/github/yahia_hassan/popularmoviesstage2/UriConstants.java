@@ -2,6 +2,8 @@ package io.github.yahia_hassan.popularmoviesstage2;
 
 
 public class UriConstants {
+    public static final String API_KEY = BuildConfig.API_KEY;
+
     public static final String SCHEME = "http";
 
     public static final String AUTHORITY = "api.themoviedb.org";
@@ -20,4 +22,12 @@ public class UriConstants {
     public static final String VIDEOS_PATH = "videos";
 
     public static final String EXTRA_MESSAGE = "Intent DetailActivity key";
+
+
+    // YouTube constants
+    public static final String YOUTUBE_SCHEME = "https";
+    public static final String YOUTUBE_AUTHORITY = "www.youtube.com";
+    public static final String YOUTUBE_WATCH_PATH = "watch";
+    public static final String YOUTUBE_V_QUERY_PARAMETER = "v";
+
 }

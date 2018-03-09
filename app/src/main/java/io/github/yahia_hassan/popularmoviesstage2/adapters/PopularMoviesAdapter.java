@@ -1,11 +1,9 @@
-package io.github.yahia_hassan.popularmoviesstage2;
+package io.github.yahia_hassan.popularmoviesstage2.adapters;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +12,10 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import io.github.yahia_hassan.popularmoviesstage2.Movie;
+import io.github.yahia_hassan.popularmoviesstage2.R;
+import io.github.yahia_hassan.popularmoviesstage2.UriConstants;
 
 public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdapter.PopularMoviesViewHolder> {
 

@@ -6,6 +6,9 @@
     <string name="user_rating_label">User Rating</string>
     <string name="sort_by_menu_top_rated">Top Rated</string>
     <string name="sort_by_menu_popular">Popular</string>
+    <string name="sort_movies_option_menu">Sort movies option menu</string>
+
+
 
 
     <string name="sort_popular_label">Popular</string>
@@ -24,5 +27,7 @@
     <string name="top_rated_activity_label">Top Rated</string>
     <string name="no_network">Your device is not connected to the internet.</string>
     <string name="user_reviews_label">User Reviews</string>
+    <string name="colon">:</string>
+    <string name="videos_label">Videos</string>
 
 </resources>
