@@ -1,6 +1,5 @@
 package io.github.yahia_hassan.popularmoviesstage2.loaders;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -18,11 +17,10 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import io.github.yahia_hassan.popularmoviesstage2.DetailsActivity;
 import io.github.yahia_hassan.popularmoviesstage2.Helper;
-import io.github.yahia_hassan.popularmoviesstage2.Movie;
+import io.github.yahia_hassan.popularmoviesstage2.POJOs.Movie;
 import io.github.yahia_hassan.popularmoviesstage2.UriConstants;
-import io.github.yahia_hassan.popularmoviesstage2.Video;
+import io.github.yahia_hassan.popularmoviesstage2.POJOs.Video;
 import io.github.yahia_hassan.popularmoviesstage2.adapters.VideoAdapter;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

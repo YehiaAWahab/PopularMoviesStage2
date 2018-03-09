@@ -1,4 +1,4 @@
-package io.github.yahia_hassan.popularmoviesstage2;
+package io.github.yahia_hassan.popularmoviesstage2.POJOs;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -1,4 +1,4 @@
-package io.github.yahia_hassan.popularmoviesstage2;
+package io.github.yahia_hassan.popularmoviesstage2.POJOs;
 
 
 

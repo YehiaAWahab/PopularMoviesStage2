@@ -13,7 +13,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import io.github.yahia_hassan.popularmoviesstage2.Movie;
+import io.github.yahia_hassan.popularmoviesstage2.POJOs.Movie;
 import io.github.yahia_hassan.popularmoviesstage2.R;
 import io.github.yahia_hassan.popularmoviesstage2.UriConstants;
 

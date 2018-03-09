@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import io.github.yahia_hassan.popularmoviesstage2.R;
-import io.github.yahia_hassan.popularmoviesstage2.Review;
+import io.github.yahia_hassan.popularmoviesstage2.POJOs.Review;
 
 
 public class UserReviewAdapter extends RecyclerView.Adapter<UserReviewAdapter.UserReviewViewHolder> {

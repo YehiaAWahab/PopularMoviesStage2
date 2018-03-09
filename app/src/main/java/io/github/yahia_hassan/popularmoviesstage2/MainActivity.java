@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import io.github.yahia_hassan.popularmoviesstage2.POJOs.Movie;
 import io.github.yahia_hassan.popularmoviesstage2.adapters.PopularMoviesAdapter;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mNoNetworkTextView = findViewById(R.id.no_network_tv);
+        mNoNetworkTextView = findViewById(R.id.details_activityno_network_tv);
         mRetryButton = findViewById(R.id.retry_button);
         mRecyclerView = findViewById(R.id.recycler_view);
         mProgressBar = findViewById(R.id.progress_bar);

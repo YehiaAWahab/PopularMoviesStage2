@@ -17,8 +17,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import io.github.yahia_hassan.popularmoviesstage2.Helper;
-import io.github.yahia_hassan.popularmoviesstage2.Movie;
-import io.github.yahia_hassan.popularmoviesstage2.Review;
+import io.github.yahia_hassan.popularmoviesstage2.POJOs.Movie;
+import io.github.yahia_hassan.popularmoviesstage2.POJOs.Review;
 import io.github.yahia_hassan.popularmoviesstage2.UriConstants;
 import io.github.yahia_hassan.popularmoviesstage2.adapters.UserReviewAdapter;
 import okhttp3.OkHttpClient;

@@ -9,7 +9,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import io.github.yahia_hassan.popularmoviesstage2.R;
-import io.github.yahia_hassan.popularmoviesstage2.Video;
+import io.github.yahia_hassan.popularmoviesstage2.POJOs.Video;
 
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
