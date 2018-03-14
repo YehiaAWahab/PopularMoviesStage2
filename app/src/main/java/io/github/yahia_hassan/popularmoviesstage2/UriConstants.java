@@ -21,7 +21,11 @@ public class UriConstants {
     public static final String REVIEWS_PATH = "reviews";
     public static final String VIDEOS_PATH = "videos";
 
-    public static final String EXTRA_MESSAGE = "Intent DetailActivity key";
+    public static final String PARCELABLE_EXTRA_MESSAGE = "parcelable_extra_message";
+    public static final String EXTRA_MESSAGE = "extra_message";
+
+    public static final int MAIN_ACTIVITY_ASYNCTASK_LOADER = 80;
+    public static final int MAIN_ACTIVITY_CURSOR_LOADER = 81;
 
 
     // YouTube constants

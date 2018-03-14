@@ -6,6 +6,7 @@
     <string name="user_rating_label">User Rating</string>
     <string name="sort_by_menu_top_rated">Top Rated</string>
     <string name="sort_by_menu_popular">Popular</string>
+    <string name="sort_by_menu_favorite">Favorites</string>
     <string name="sort_movies_option_menu">Sort movies option menu</string>
 
 
@@ -29,5 +30,11 @@
     <string name="user_reviews_label">User Reviews</string>
     <string name="colon">:</string>
     <string name="videos_label">Videos</string>
+
+    <string name="content_authority">io.github.yahia_hassan.popularmoviesstage2</string>
+
+
+    <string name="extra_main_activity_async_task_loader">extra_main_activity_async_task_loader</string>
+    <string name="extra_main_activity_cursor_loader">extra_main_activity_cursor_loader</string>
 
 </resources>

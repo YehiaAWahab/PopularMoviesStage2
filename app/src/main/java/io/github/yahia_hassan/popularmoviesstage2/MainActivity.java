@@ -2,6 +2,7 @@ package io.github.yahia_hassan.popularmoviesstage2;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -28,35 +29,30 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import io.github.yahia_hassan.popularmoviesstage2.POJOs.Movie;
+import io.github.yahia_hassan.popularmoviesstage2.adapters.FavoritesAdapter;
 import io.github.yahia_hassan.popularmoviesstage2.adapters.PopularMoviesAdapter;
+import io.github.yahia_hassan.popularmoviesstage2.data.MovieContract;
 import io.github.yahia_hassan.popularmoviesstage2.databinding.ActivityMainBinding;
+import io.github.yahia_hassan.popularmoviesstage2.loaders.MainActivityAsyncTaskLoader;
+import io.github.yahia_hassan.popularmoviesstage2.loaders.MainActivityCursorLoader;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>,
-        PopularMoviesAdapter.MovieAdapterOnClickListener {
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
 
-    public static final int LOADER_ID = 45;
+    public static final int MAIN_LOADER_ID = 45;
+    public static final int FAVORITES_LOADER_ID = 46;
 
 
-    private PopularMoviesAdapter mPopularMoviesAdapter;
+
     private GridLayoutManager mLayoutManager;
-    private Bundle mBundle;
+
     private ActivityMainBinding mActivityMainBinding;
 
-
-    private static final String RESULTS_JSON_ARRAY = "results";
-    private static final String MOVIE_ID_STRING = "id";
-    private static final String MOVIE_ORIGINAL_TITLE_STRING = "original_title";
-    private static final String MOVIE_POSTER_PATH_STRING = "poster_path";
-    private static final String MOVIE_Backdrop_POSTER_PATH_STRING = "backdrop_path";
-    private static final String MOVIE_PLOT_SYNOPSIS_STRING = "overview";
-    private static final String MOVIE_USER_RATING_STRING = "vote_average";
-    private static final String MOVIE_RELEASE_DATE_STRING = "release_date";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +79,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (Helper.isNetworkAvailable(this)) {
             Bundle bundle = new Bundle();
             bundle.putString(getString(R.string.main_activity_bundle_key), UriConstants.POPULAR_PATH);
-            getSupportLoaderManager().initLoader(LOADER_ID, bundle, this);
+            MainActivityAsyncTaskLoader mainActivityAsyncTaskLoader = new MainActivityAsyncTaskLoader(this, mActivityMainBinding);
+            getSupportLoaderManager().initLoader(MAIN_LOADER_ID, bundle, mainActivityAsyncTaskLoader);
         } else {
             showNoNetworkError();
         }
@@ -97,122 +94,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
-    }
-
-    @Override
-    public void OnClick(Movie movie) {
-        Intent intent = new Intent(this, DetailsActivity.class);
-        intent.putExtra(UriConstants.EXTRA_MESSAGE, movie);
-        startActivity(intent);
-    }
-
-    @Override
-    public Loader<String> onCreateLoader(int id, Bundle args) {
-        mBundle = args;
-        return new AsyncTaskLoader<String>(this) {
-            String mMovieJSON;
-
-            @Nullable
-            @Override
-            public String loadInBackground() {
-                String jsonString = null;
-                OkHttpClient client = new OkHttpClient();
-                Uri.Builder builder = new Uri.Builder();
-                builder.scheme(UriConstants.SCHEME)
-                        .authority(UriConstants.AUTHORITY)
-                        .appendPath(UriConstants.VERSION_PATH)
-                        .appendPath(UriConstants.MOVIE_PATH)
-                        .appendPath(mBundle.getString(getString(R.string.main_activity_bundle_key)))
-                        .appendQueryParameter(UriConstants.API_KEY_QUERY_PARAM, UriConstants.API_KEY);
-                String url = builder.build().toString();
-                Log.d(TAG, "The URL is: " + url);
-
-                Request request = new Request.Builder()
-                        .url(url)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    jsonString = response.body().string();
-                } catch (IOException e) {
-                    Log.e(TAG, "IOException caught at loadInBackground: " + e);
-                    e.printStackTrace();
-                }
-                return jsonString;
-            }
-
-            @Override
-            public void deliverResult(@Nullable String data) {
-                mMovieJSON = data;
-                super.deliverResult(data);
-            }
-
-            @Override
-            protected void onStartLoading() {
-                if (mMovieJSON != null) {
-                    deliverResult(mMovieJSON);
-                } else {
-                    showProgressBar();
-                    forceLoad();
-                }
-
-
-            }
-        };
-    }
-
-    @Override
-    public void onLoadFinished(Loader<String> loader, String data) {
-        showRecyclerView();
-        JSONObject rootJSONObject = Helper.createJSONObjectFromString(TAG, data);
-        ArrayList<Movie> movieArrayList = null;
-
-        if (rootJSONObject != null) {
-            movieArrayList = createMovieArrayList(rootJSONObject);
-        }
-
-        mPopularMoviesAdapter = new PopularMoviesAdapter(this, movieArrayList, this);
-        mActivityMainBinding.recyclerView.setAdapter(mPopularMoviesAdapter);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<String> loader) {
-        getSupportLoaderManager().destroyLoader(LOADER_ID);
-    }
-
-
-    /**
-     * Creates a Movie ArrayList using a JSONObject.
-     * @param rootJSONObject
-     * @return
-     */
-    private static ArrayList<Movie> createMovieArrayList (JSONObject rootJSONObject) {
-        ArrayList<Movie> movieArrayList = new ArrayList<>();
-        Movie movie;
-
-        JSONArray resultsJSONArray = rootJSONObject.optJSONArray(RESULTS_JSON_ARRAY);
-        int size = resultsJSONArray.length();
-        for (int i = 0; i < size; i++) {
-            JSONObject nthJSONObject = resultsJSONArray.optJSONObject(i);
-            String movieId = nthJSONObject.optString(MOVIE_ID_STRING);
-            String movieTitle = nthJSONObject.optString(MOVIE_ORIGINAL_TITLE_STRING);
-            String moviePoster = nthJSONObject.optString(MOVIE_POSTER_PATH_STRING);
-            String movieBackdropPoster = nthJSONObject.optString(MOVIE_Backdrop_POSTER_PATH_STRING);
-            String plotSynopsis = nthJSONObject.optString(MOVIE_PLOT_SYNOPSIS_STRING);
-            String userRating = nthJSONObject.optString(MOVIE_USER_RATING_STRING);
-            String releaseDate = nthJSONObject.optString(MOVIE_RELEASE_DATE_STRING);
-
-            movie = new Movie(movieId,
-                    movieTitle,
-                    moviePoster,
-                    movieBackdropPoster,
-                    plotSynopsis,
-                    userRating,
-                    releaseDate);
-
-
-            movieArrayList.add(movie);
-        }
-        return movieArrayList;
     }
 
 
@@ -236,6 +117,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 bundle.putString(getString(R.string.main_activity_bundle_key), UriConstants.TOP_RATED_PATH);
                 restartLoader(bundle);
                 return true;
+            case R.id.sort_by_menu_favorite:
+                MainActivityCursorLoader mainActivityCursorLoader = new MainActivityCursorLoader(this, mActivityMainBinding);
+                getSupportLoaderManager().restartLoader(FAVORITES_LOADER_ID, null, mainActivityCursorLoader);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -244,7 +129,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private void restartLoader(Bundle bundle) {
         if (Helper.isNetworkAvailable(this)) {
-            getSupportLoaderManager().restartLoader(LOADER_ID, bundle, this);
+            MainActivityAsyncTaskLoader mainActivityAsyncTaskLoader = new MainActivityAsyncTaskLoader(this, mActivityMainBinding);
+            getSupportLoaderManager().restartLoader(MAIN_LOADER_ID, bundle, mainActivityAsyncTaskLoader);
         } else {
             showNoNetworkError();
         }
@@ -258,19 +144,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mActivityMainBinding.retryButton.setVisibility(View.VISIBLE);
     }
 
-    private void showProgressBar() {
-        mActivityMainBinding.progressBar.setVisibility(View.VISIBLE);
-        mActivityMainBinding.recyclerView.setVisibility(View.GONE);
-        mActivityMainBinding.noNetworkTv.setVisibility(View.GONE);
-        mActivityMainBinding.retryButton.setVisibility(View.GONE);
 
-    }
-
-    private void showRecyclerView() {
-        mActivityMainBinding.recyclerView.setVisibility(View.VISIBLE);
-        mActivityMainBinding.progressBar.setVisibility(View.GONE);
-        mActivityMainBinding.noNetworkTv.setVisibility(View.GONE);
-        mActivityMainBinding.retryButton.setVisibility(View.GONE);
-    }
 
 }
