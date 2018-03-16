@@ -11,6 +11,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
 import io.github.yahia_hassan.popularmoviesstage2.DetailsActivity;
+import io.github.yahia_hassan.popularmoviesstage2.FavoritesDetailsActivity;
 import io.github.yahia_hassan.popularmoviesstage2.POJOs.Movie;
 import io.github.yahia_hassan.popularmoviesstage2.R;
 import io.github.yahia_hassan.popularmoviesstage2.UriConstants;
@@ -43,7 +44,6 @@ public class MainActivityCursorLoader implements LoaderManager.LoaderCallbacks<C
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Uri uri = Uri.parse(MovieContract.BASE_CONTENT_URI + MovieContract.PATH_MOVIES);
         FavoritesAdapter favoritesAdapter = new FavoritesAdapter(mContext, data, this);
         mActivityMainBinding.recyclerView.setAdapter(favoritesAdapter);
 
@@ -56,8 +56,7 @@ public class MainActivityCursorLoader implements LoaderManager.LoaderCallbacks<C
 
     @Override
     public void OnClick(Movie movie) {
-        Intent intent = new Intent(mContext, DetailsActivity.class);
-        intent.putExtra(UriConstants.EXTRA_MESSAGE, UriConstants.MAIN_ACTIVITY_CURSOR_LOADER);
+        Intent intent = new Intent(mContext, FavoritesDetailsActivity.class);
         intent.putExtra(UriConstants.PARCELABLE_EXTRA_MESSAGE, movie);
         mContext.startActivity(intent);
 

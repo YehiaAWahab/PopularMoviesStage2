@@ -108,7 +108,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
 
         @Override
         public void onClick(View v) {
-            int position = mCursor.getPosition();
+            int position = getAdapterPosition();
             mCursor.moveToPosition(position);
             String movieId = mCursor.getString(mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID));
             String movieTitle = mCursor.getString(mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE));

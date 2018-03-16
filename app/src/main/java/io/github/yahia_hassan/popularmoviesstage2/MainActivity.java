@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         /*
-         * I search online how to get the Activity orientation and find the solution here
+         * I searched online how to get the Activity orientation and find the solution here
           * on Stack Overflow ( https://stackoverflow.com/a/11381854/5255289 )
          */
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -82,7 +82,8 @@ public class MainActivity extends AppCompatActivity {
             MainActivityAsyncTaskLoader mainActivityAsyncTaskLoader = new MainActivityAsyncTaskLoader(this, mActivityMainBinding);
             getSupportLoaderManager().initLoader(MAIN_LOADER_ID, bundle, mainActivityAsyncTaskLoader);
         } else {
-            showNoNetworkError();
+            //showNoNetworkError();
+            showFavoriteMovies();
         }
 
         mActivityMainBinding.retryButton.setOnClickListener(new View.OnClickListener() {
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putString(getString(R.string.main_activity_bundle_key), UriConstants.POPULAR_PATH);
                 restartLoader(bundle);
+
             }
         });
 
@@ -118,8 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 restartLoader(bundle);
                 return true;
             case R.id.sort_by_menu_favorite:
-                MainActivityCursorLoader mainActivityCursorLoader = new MainActivityCursorLoader(this, mActivityMainBinding);
-                getSupportLoaderManager().restartLoader(FAVORITES_LOADER_ID, null, mainActivityCursorLoader);
+                showFavoriteMovies();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -144,6 +145,15 @@ public class MainActivity extends AppCompatActivity {
         mActivityMainBinding.retryButton.setVisibility(View.VISIBLE);
     }
 
+    private void showFavoriteMovies() {
+        mActivityMainBinding.recyclerView.setVisibility(View.VISIBLE);
+        mActivityMainBinding.progressBar.setVisibility(View.GONE);
+        mActivityMainBinding.noNetworkTv.setVisibility(View.GONE);
+        mActivityMainBinding.retryButton.setVisibility(View.GONE);
+        MainActivityCursorLoader mainActivityCursorLoader = new MainActivityCursorLoader(this, mActivityMainBinding);
+        getSupportLoaderManager().restartLoader(FAVORITES_LOADER_ID, null, mainActivityCursorLoader);
+
+    }
 
 
 }

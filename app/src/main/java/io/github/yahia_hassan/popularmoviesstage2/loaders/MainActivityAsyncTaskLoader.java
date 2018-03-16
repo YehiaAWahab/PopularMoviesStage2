@@ -182,7 +182,6 @@ public class MainActivityAsyncTaskLoader implements LoaderManager.LoaderCallback
     @Override
     public void OnClick(Movie movie) {
         Intent intent = new Intent(mContext, DetailsActivity.class);
-        intent.putExtra(UriConstants.EXTRA_MESSAGE, UriConstants.MAIN_ACTIVITY_ASYNCTASK_LOADER);
         intent.putExtra(UriConstants.PARCELABLE_EXTRA_MESSAGE, movie);
         mContext.startActivity(intent);
     }
