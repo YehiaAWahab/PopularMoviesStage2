@@ -26,7 +26,8 @@
     <string name="top_rated_activity_label">Top Rated</string>
     <string name="no_network">Your device is not connected to the internet.</string>
     <string name="user_reviews_label">User Reviews</string>
-    <string name="colon">:</string>
+    <string name="author">%1$s:</string>
+    <string name="details_activity_share">Watch %1$s Trailer: %2$s \n %3$s \n #PopularMoviesApp</string>
     <string name="videos_label">Videos</string>
 
     <string name="content_authority">io.github.yahia_hassan.popularmoviesstage2</string>

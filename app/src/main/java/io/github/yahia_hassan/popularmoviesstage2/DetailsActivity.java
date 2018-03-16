@@ -173,7 +173,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 .appendQueryParameter(UriConstants.YOUTUBE_V_QUERY_PARAMETER, key);
         mFirstTrailerURL = builder.build().toString();
 
-        Log.d(TAG, mFirstTrailerTitle + getString(R.string.colon) + " " + mFirstTrailerURL + "\n#PopularMoviesApp");
 
     }
 
@@ -294,7 +293,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 if (mFirstTrailerURL != null && mFirstTrailerTitle != null) {
                     Intent intent = ShareCompat.IntentBuilder.from(this)
                             .setType("text/plain")
-                            .setText(mFirstTrailerTitle + getString(R.string.colon) + " " + mFirstTrailerURL + "\n#PopularMoviesApp")
+                            .setText(getString(R.string.details_activity_share, mClickedMovie.getMovieTitle(), mFirstTrailerTitle, mFirstTrailerURL))
                             .getIntent();
                     if (intent.resolveActivity(getPackageManager()) != null) {
                         startActivity(intent);
