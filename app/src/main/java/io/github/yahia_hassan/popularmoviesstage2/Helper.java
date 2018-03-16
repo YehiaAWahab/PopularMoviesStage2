@@ -2,6 +2,7 @@ package io.github.yahia_hassan.popularmoviesstage2;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.github.yahia_hassan.popularmoviesstage2.POJOs.Movie;
+import io.github.yahia_hassan.popularmoviesstage2.POJOs.Video;
 import io.github.yahia_hassan.popularmoviesstage2.data.MovieContract;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
@@ -86,4 +88,5 @@ public class Helper {
             floatingActionButton.setImageResource(R.drawable.ic_favorite);
         }
     }
+
 }

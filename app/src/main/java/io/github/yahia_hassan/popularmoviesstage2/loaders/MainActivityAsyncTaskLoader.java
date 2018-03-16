@@ -43,9 +43,7 @@ public class MainActivityAsyncTaskLoader implements LoaderManager.LoaderCallback
     private static final String MOVIE_USER_RATING_STRING = "vote_average";
     private static final String MOVIE_RELEASE_DATE_STRING = "release_date";
 
-    public static final int LOADER_ID = 45;
 
-    private PopularMoviesAdapter mPopularMoviesAdapter;
     private Bundle mBundle;
     private Context mContext;
     private ActivityMainBinding mActivityMainBinding;
@@ -120,8 +118,8 @@ public class MainActivityAsyncTaskLoader implements LoaderManager.LoaderCallback
             movieArrayList = createMovieArrayList(rootJSONObject);
         }
 
-        mPopularMoviesAdapter = new PopularMoviesAdapter(mContext, movieArrayList, this);
-        mActivityMainBinding.recyclerView.setAdapter(mPopularMoviesAdapter);
+        PopularMoviesAdapter popularMoviesAdapter = new PopularMoviesAdapter(mContext, movieArrayList, this);
+        mActivityMainBinding.recyclerView.setAdapter(popularMoviesAdapter);
     }
 
     @Override

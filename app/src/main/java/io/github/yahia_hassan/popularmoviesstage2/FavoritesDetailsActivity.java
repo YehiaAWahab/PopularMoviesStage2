@@ -38,7 +38,7 @@ public class FavoritesDetailsActivity extends AppCompatActivity {
         mActivityFavoritesDetailsBinding.setFavoritesMovie(mClickedMovie);
         mActivityFavoritesDetailsBinding.fdaFavoriteFab.setImageResource(R.drawable.ic_favorite);
 
-
+        setTitle(mClickedMovie.getMovieTitle());
         Uri.Builder builder = new Uri.Builder();
         builder.scheme(UriConstants.SCHEME)
                 .authority(UriConstants.IMAGE_AUTHORITY)

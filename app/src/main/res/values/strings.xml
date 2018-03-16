@@ -34,5 +34,6 @@
 
     <string name="extra_main_activity_async_task_loader">extra_main_activity_async_task_loader</string>
     <string name="extra_main_activity_cursor_loader">extra_main_activity_cursor_loader</string>
+    <string name="activity_code">activity_code</string>
 
 </resources>

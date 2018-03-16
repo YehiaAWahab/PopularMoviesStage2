@@ -1,28 +1,39 @@
 package io.github.yahia_hassan.popularmoviesstage2;
 
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
+import android.content.Loader;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
+import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.app.ShareCompat;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 import io.github.yahia_hassan.popularmoviesstage2.POJOs.Movie;
-import io.github.yahia_hassan.popularmoviesstage2.data.MovieContract;
+import io.github.yahia_hassan.popularmoviesstage2.POJOs.Video;
 import io.github.yahia_hassan.popularmoviesstage2.databinding.ActivityDetailsBinding;
 import io.github.yahia_hassan.popularmoviesstage2.loaders.ReviewAsyncTaskLoader;
 import io.github.yahia_hassan.popularmoviesstage2.loaders.VideosAsyncTaskLoader;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
 
 
 
@@ -31,8 +42,15 @@ public class DetailsActivity extends AppCompatActivity {
 
     private static final String TAG = DetailsActivity.class.getSimpleName();
 
+    private final int SHARE_LOADER_ID = 84;
+    private static final String RESULTS_JSON_ARRAY = "results";
+    private static final String VIDEO_KEY_STRING = "key";
+    private static final String VIDEO_NAME_STRING = "name";
 
-    Movie mClickedMovie;
+    private Movie mClickedMovie;
+
+    private String mFirstTrailerTitle;
+    private String mFirstTrailerURL;
 
     private LinearLayoutManager mUserReviewLinearLayoutManager;
     private LinearLayoutManager mVideoLinearLayoutManager;
@@ -50,10 +68,12 @@ public class DetailsActivity extends AppCompatActivity {
         mUserReviewLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mVideoLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 
+        getSupportLoaderManager().initLoader(SHARE_LOADER_ID, null, this);
 
         mClickedMovie = intent.getParcelableExtra(UriConstants.PARCELABLE_EXTRA_MESSAGE);
 
         mActivityDetailsBinding.setMovie(mClickedMovie);
+
 
 
 
@@ -85,6 +105,82 @@ public class DetailsActivity extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    public android.support.v4.content.Loader<String> onCreateLoader(int id, Bundle args) {
+        return new AsyncTaskLoader<String>(this) {
+            String mVideosJSON;
+
+            @Nullable
+            @Override
+            public String loadInBackground() {
+                String jsonString = null;
+                OkHttpClient client = new OkHttpClient();
+                Uri.Builder builder = new Uri.Builder();
+                builder.scheme(UriConstants.SCHEME)
+                        .authority(UriConstants.AUTHORITY)
+                        .appendPath(UriConstants.VERSION_PATH)
+                        .appendPath(UriConstants.MOVIE_PATH)
+                        .appendPath(mClickedMovie.getMovieId())
+                        .appendPath(UriConstants.VIDEOS_PATH)
+                        .appendQueryParameter(UriConstants.API_KEY_QUERY_PARAM, UriConstants.API_KEY);
+                String url = builder.build().toString();
+                Log.d(TAG, "The URL is: " + url);
+
+                Request request = new Request.Builder()
+                        .url(url)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    jsonString = response.body().string();
+                } catch (IOException e) {
+                    Log.e(TAG, "IOException caught at loadInBackground: " + e);
+                    e.printStackTrace();
+                }
+                return jsonString;
+            }
+
+            @Override
+            public void deliverResult(@Nullable String data) {
+                mVideosJSON = data;
+                super.deliverResult(data);
+            }
+
+            @Override
+            protected void onStartLoading() {
+                if (mVideosJSON != null) {
+                    deliverResult(mVideosJSON);
+                } else {
+                    forceLoad();
+                }
+
+
+            }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(android.support.v4.content.Loader<String> loader, String data) {
+        JSONObject jsonObject = Helper.createJSONObjectFromString(TAG, data);
+        JSONArray jsonArray = jsonObject.optJSONArray(RESULTS_JSON_ARRAY);
+        JSONObject firstTrailerJSONObject = jsonArray.optJSONObject(0);
+        mFirstTrailerTitle = firstTrailerJSONObject.optString(VIDEO_NAME_STRING);
+        String key = firstTrailerJSONObject.optString(VIDEO_KEY_STRING);
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme(UriConstants.YOUTUBE_SCHEME)
+                .authority(UriConstants.YOUTUBE_AUTHORITY)
+                .appendPath(UriConstants.YOUTUBE_WATCH_PATH)
+                .appendQueryParameter(UriConstants.YOUTUBE_V_QUERY_PARAMETER, key);
+        mFirstTrailerURL = builder.build().toString();
+
+        Log.d(TAG, mFirstTrailerTitle + getString(R.string.colon) + " " + mFirstTrailerURL + "\n#PopularMoviesApp");
+
+    }
+
+    @Override
+    public void onLoaderReset(android.support.v4.content.Loader<String> loader) {
+
+    }
 
 
     private void restartLoaders() {
@@ -137,7 +233,6 @@ public class DetailsActivity extends AppCompatActivity {
                 .placeholder(R.color.placeholder_grey)
                 .into(mActivityDetailsBinding.moviePosterIv);
 
-        Log.d(TAG, "Image URL is: " + url);
 
     }
 
@@ -183,6 +278,32 @@ public class DetailsActivity extends AppCompatActivity {
 
         mActivityDetailsBinding.detailsActivityNoConnectionTv.setVisibility(View.GONE);
         mActivityDetailsBinding.detailsActivityRetryButton.setVisibility(View.GONE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.details_activity_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.details_activity_menu:
+                if (mFirstTrailerURL != null && mFirstTrailerTitle != null) {
+                    Intent intent = ShareCompat.IntentBuilder.from(this)
+                            .setType("text/plain")
+                            .setText(mFirstTrailerTitle + getString(R.string.colon) + " " + mFirstTrailerURL + "\n#PopularMoviesApp")
+                            .getIntent();
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 
