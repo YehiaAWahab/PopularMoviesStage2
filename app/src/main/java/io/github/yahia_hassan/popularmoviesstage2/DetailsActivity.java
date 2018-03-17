@@ -68,7 +68,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mUserReviewLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mVideoLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 
-        getSupportLoaderManager().initLoader(SHARE_LOADER_ID, null, this);
 
         mClickedMovie = intent.getParcelableExtra(UriConstants.PARCELABLE_EXTRA_MESSAGE);
 
@@ -84,7 +83,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         if (Helper.isNetworkAvailable(this)) {
 
             makeNetworkRequest();
-
 
         } else {
             showNoNetworkError();
@@ -186,6 +184,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         if (Helper.isNetworkAvailable(this)) {
             showData();
             makeNetworkRequest();
+            getSupportLoaderManager().restartLoader(SHARE_LOADER_ID, null, this);
         } else {
             showNoNetworkError();
         }
@@ -207,7 +206,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
         getSupportLoaderManager().initLoader(REVIEW_LOADER_ID, null, reviewAsyncTaskLoader);
 
-
+        getSupportLoaderManager().initLoader(SHARE_LOADER_ID, null, this);
 
 
         /*
